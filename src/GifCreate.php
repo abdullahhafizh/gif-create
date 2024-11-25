@@ -216,9 +216,9 @@ class GifCreate
                 $this->transparent_color = imagecolortransparent($resourceImage);
             }
 
-            for ($j = (13 + 3 * (2 << (ord($this->sources[ $i ]{10}) & 0x07))), $k = true; $k; $j++) {
+            for ($j = (13 + 3 * (2 << (ord($this->sources[ $i ][10]) & 0x07))), $k = true; $k; $j++) {
 
-                switch ($this->sources[ $i ]{$j}) {
+                switch ($this->sources[ $i ][$j]) {
 
                     case '!':
                         if ((substr($this->sources[ $i ], ($j + 3), 8)) == 'NETSCAPE') {
@@ -260,9 +260,9 @@ class GifCreate
     protected function gifAddHeader()
     {
         $cmap = 0;
-        if (ord($this->sources[ 0 ]{10}) & 0x80) {
+        if (ord($this->sources[ 0 ][10]) & 0x80) {
 
-            $cmap = 3 * (2 << (ord($this->sources[ 0 ]{10}) & 0x07));
+            $cmap = 3 * (2 << (ord($this->sources[ 0 ][10]) & 0x07));
             $this->gif .= substr($this->sources[ 0 ], 6, 7);
             $this->gif .= substr($this->sources[ 0 ], 13, $cmap);
             $this->gif .= "!\377\13NETSCAPE2.0\3\1".$this->word2bin($this->config[ 'loop' ])."\0";
@@ -285,22 +285,22 @@ class GifCreate
 
     private function addFrame($i, $d)
     {
-        $Locals_str = 13 + 3 * (2 << (ord($this->sources[ $i ]{10}) & 0x07));
+        $Locals_str = 13 + 3 * (2 << (ord($this->sources[ $i ][10]) & 0x07));
 
         $Locals_end = strlen($this->sources[ $i ]) - $Locals_str - 1;
         $Locals_tmp = substr($this->sources[ $i ], $Locals_str, $Locals_end);
 
-        $Global_len = 2 << (ord($this->sources[ 0 ]{10}) & 0x07);
-        $Locals_len = 2 << (ord($this->sources[ $i ]{10}) & 0x07);
+        $Global_len = 2 << (ord($this->sources[ 0 ][10]) & 0x07);
+        $Locals_len = 2 << (ord($this->sources[ $i ][10]) & 0x07);
 
-        $Global_rgb = substr($this->sources[ 0 ], 13, 3 * (2 << (ord($this->sources[ 0 ]{10}) & 0x07)));
-        $Locals_rgb = substr($this->sources[ $i ], 13, 3 * (2 << (ord($this->sources[ $i ]{10}) & 0x07)));
+        $Global_rgb = substr($this->sources[ 0 ], 13, 3 * (2 << (ord($this->sources[ 0 ][10]) & 0x07)));
+        $Locals_rgb = substr($this->sources[ $i ], 13, 3 * (2 << (ord($this->sources[ $i ][10]) & 0x07)));
 
         $Locals_ext = "!\xF9\x04".chr(($this->dis << 2) + 0).$this->word2bin($d)."\x0\x0";
 
-        if ($this->transparent_color > -1 && ord($this->sources[ $i ]{10}) & 0x80) {
+        if ($this->transparent_color > -1 && ord($this->sources[ $i ][10]) & 0x80) {
 
-            for ($j = 0; $j < (2 << (ord($this->sources[ $i ]{10}) & 0x07)); $j++) {
+            for ($j = 0; $j < (2 << (ord($this->sources[ $i ][10]) & 0x07)); $j++) {
 
                 if (ord($Locals_rgb{3 * $j + 0}) == (($this->transparent_color >> 16) & 0xFF) && ord($Locals_rgb{3 * $j + 1}) == (($this->transparent_color >> 8) & 0xFF) && ord($Locals_rgb{3 * $j + 2}) == (($this->transparent_color >> 0) & 0xFF)) {
                     $Locals_ext = "!\xF9\x04".chr(($this->dis << 2) + 1).chr(($d >> 0) & 0xFF).chr(($d >> 8) & 0xFF).chr($j)."\x0";
@@ -332,7 +332,7 @@ class GifCreate
 
         }
 
-        if (ord($this->sources[ $i ]{10}) & 0x80 && $this->builded) {
+        if (ord($this->sources[ $i ][10]) & 0x80 && $this->builded) {
 
             if ($Global_len == $Locals_len) {
 
@@ -345,7 +345,7 @@ class GifCreate
                     $byte = ord($Locals_img{9});
                     $byte |= 0x80;
                     $byte &= 0xF8;
-                    $byte |= (ord($this->sources[ 0 ]{10}) & 0x07);
+                    $byte |= (ord($this->sources[ 0 ][10]) & 0x07);
                     $Locals_img{9} = chr($byte);
                     $this->gif .= $Locals_ext.$Locals_img.$Locals_rgb.$Locals_tmp;
                 }
@@ -355,7 +355,7 @@ class GifCreate
                 $byte = ord($Locals_img{9});
                 $byte |= 0x80;
                 $byte &= 0xF8;
-                $byte |= (ord($this->sources[ $i ]{10}) & 0x07);
+                $byte |= (ord($this->sources[ $i ][10]) & 0x07);
                 $Locals_img{9} = chr($byte);
                 $this->gif .= $Locals_ext.$Locals_img.$Locals_rgb.$Locals_tmp;
             }
