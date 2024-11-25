@@ -15,7 +15,7 @@ Easy way to create gif animations from png images for laravel 5.*.
 Via Composer
 
 ``` bash
-$ composer require pomirleanu/gif-create
+$ composer require abdullahhafizh/gif-create
 ```
 
 ### Usage basic php
